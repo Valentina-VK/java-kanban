@@ -1,3 +1,6 @@
+package task;
+import history.STATUS;
+
 public class Task {
     protected String name;
     protected String description;
@@ -30,7 +33,7 @@ public class Task {
                 id, name, description.length(), status);
     }
 
-    protected void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
