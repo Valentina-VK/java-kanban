@@ -1,10 +1,14 @@
 package task;
 
+import history.Status;
+
 public class Subtask extends Task {
     private int idOfEpic;
 
-    public Subtask(String name, String description) {
+    public Subtask(String name, String description, Status status, int idOfEpic) {
         super(name, description);
+        this.status = status;
+        this.idOfEpic = idOfEpic;
     }
 
     public void setIdOfEpic(int idOfEpic) {
