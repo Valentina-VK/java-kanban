@@ -1,16 +1,16 @@
 package task;
-import history.STATUS;
+import history.Status;
 
 public class Task {
     protected String name;
     protected String description;
     protected int id;
-    protected STATUS status;
+    protected Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = STATUS.NEW;
+        this.status = Status.NEW;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("id: %d, name: %s, description.length: %d, status: %s",
+        return String.format("id: %d, name: %s, description.length: %d, Status: %s",
                 id, name, description.length(), status);
     }
 
@@ -41,11 +41,11 @@ public class Task {
         return id;
     }
 
-    public void setStatus(STATUS status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public STATUS getStatus() {
+    public Status getStatus() {
         return status;
     }
 }
