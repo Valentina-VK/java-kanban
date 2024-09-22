@@ -1,6 +1,6 @@
 package history;
 
-public enum STATUS {
+public enum Status {
     NEW,
     IN_PROGRESS,
     DONE
