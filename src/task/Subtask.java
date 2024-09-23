@@ -11,10 +11,6 @@ public class Subtask extends Task {
         this.idOfEpic = idOfEpic;
     }
 
-    public void setIdOfEpic(int idOfEpic) {
-        this.idOfEpic = idOfEpic;
-    }
-
     public int getIdOfEpic() {
         return idOfEpic;
     }
