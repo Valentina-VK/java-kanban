@@ -31,9 +31,9 @@ public class TaskManager {
         if (!epicList.containsKey(task.getIdOfEpic())) return;
         countID++;
         task.setId(countID);
-        task.setIdOfEpic(task.getIdOfEpic());
         subtaskList.put(countID, task);
         epicList.get(task.getIdOfEpic()).addSubtask(countID);
+        deduceEpicStatus(task.getIdOfEpic());
     }
 
     public void updateTask(Epic task) {
@@ -97,21 +97,11 @@ public class TaskManager {
         }
     }
 
-    public void deleteAllSubtask(int idOfEpic) {
-        ArrayList<Integer> listIdOfSubtasks = epicList.get(idOfEpic).getListIdOfSubtasks();
-        for (int idSubtask : listIdOfSubtasks) {
-            subtaskList.remove(idSubtask);
-        }
-        epicList.get(idOfEpic).deleteAllSubtasks();
-        deduceEpicStatus(idOfEpic);
-    }
-
     public void deleteTaskById(int idOfTask) {
         if (taskList.containsKey(idOfTask)) {
             taskList.remove(idOfTask);
         } else if (epicList.containsKey(idOfTask)) {
-            ArrayList<Integer> listIdOfSubtasks = epicList.get(idOfTask).getListIdOfSubtasks();
-            for (int idSubtask : listIdOfSubtasks) {
+            for (int idSubtask : epicList.get(idOfTask).getListIdOfSubtasks()) {
                 subtaskList.remove(idSubtask);
             }
             epicList.remove(idOfTask);
@@ -123,7 +113,7 @@ public class TaskManager {
         }
     }
 
-    void deduceEpicStatus(int idOfEpic) {
+    private void deduceEpicStatus(int idOfEpic) {
         ArrayList<Integer> listIdOfSubtasks = epicList.get(idOfEpic).getListIdOfSubtasks();
         int countOfDone = 0;
         if (listIdOfSubtasks.isEmpty()) epicList.get(idOfEpic).setStatus(Status.NEW);
