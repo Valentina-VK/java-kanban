@@ -1,5 +1,6 @@
 package task;
-import history.Status;
+
+import manager.Status;
 
 public class Task {
     protected String name;

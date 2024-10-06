@@ -1,4 +1,5 @@
 package task;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -10,6 +11,7 @@ public class Epic extends Task {
     }
 
     public void addSubtask(int idOfSubtask) {
+        if (idOfSubtask == this.id) return;
         if (listIdOfSubtasks.contains(idOfSubtask)) return;
         listIdOfSubtasks.add(idOfSubtask);
     }
