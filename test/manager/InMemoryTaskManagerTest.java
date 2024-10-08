@@ -8,6 +8,7 @@ import task.Task;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class InMemoryTaskManagerTest {
@@ -22,6 +23,10 @@ public class InMemoryTaskManagerTest {
 
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
+        assertEquals(task.getId(), savedTask.getId(), "ID не совпадают.");
+        assertEquals(task.getName(), savedTask.getName(), "Name не совпадают.");
+        assertEquals(task.getDescription(), savedTask.getDescription(), "Description не совпадают.");
+        assertEquals(task.getStatus(), savedTask.getStatus(), "Status не совпадают.");
 
         final List<Task> tasks = taskManager.getTaskList();
 
@@ -64,13 +69,29 @@ public class InMemoryTaskManagerTest {
         assertNotNull(savedSub, "Задача не найдена.");
         assertEquals(subtask1, savedSub, "Задачи не совпадают.");
 
-        assertNull(taskManager.getTaskByID(subId2),
-                "Некорректное сохранение позадачи .");
+        assertNull(taskManager.getTaskByID(subId2), "Некорректное сохранение позадачи.");
 
         final List<Subtask> subtasks = taskManager.getSubTaskList();
 
         assertNotNull(subtasks, "Задачи не возвращаются.");
         assertEquals(1, subtasks.size(), "Неверное количество подзадач.");
+    }
+
+    @Test
+    void notConflictTasksInMemoryTaskManager() {
+        Task task = new Task("Test addNewTask", "Test addNewTask description");
+        int notGenId = 1111111;
+        task.setId(notGenId);
+        taskManager.updateTask(task);
+        assertNull(taskManager.getTaskByID(notGenId), "Некорректное обновление позадачи.");
+
+        final List<Task> tasks = taskManager.getTaskList();
+        int savedSize = tasks.size();
+        taskManager.deleteTaskById(notGenId);
+        assertEquals(savedSize, taskManager.getTaskList().size(), "Неверное количество задач.");
+
+        final int newTaskId = taskManager.addTask(task);
+        assertNotEquals(newTaskId, notGenId, "Новый ID при добавлении не сгенерирован");
     }
 
 

@@ -5,7 +5,6 @@ import task.Task;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,12 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InMemoryHistoryManagerTest {
     private static final HistoryManager historyManager = Managers.getDefaultHistory();
-    Task task = new Task("Test addNewTask", "Test addNewTask description");
-
-    @BeforeAll
-    static void beforeAll() {
-        historyManager.clearHistory();
-    }
+    private final Task task = new Task("Test addNewTask", "Test addNewTask description");
 
     @Test
     void add() {

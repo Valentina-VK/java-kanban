@@ -2,12 +2,13 @@ package history;
 
 import task.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    static final int LIMIT_OF_HISTORY = 10;
-    List<Task> history = new ArrayList<>(LIMIT_OF_HISTORY);
+    private static final int LIMIT_OF_HISTORY = 10;
+    private final List<Task> history = new LinkedList<>();
+
 
     @Override
     public void addHistory(Task task) {
@@ -19,11 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return List.copyOf(history);
     }
 
-    @Override
-    public void clearHistory() {
-        history.clear();
-    }
 }

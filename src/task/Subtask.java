@@ -16,6 +16,13 @@ public class Subtask extends Task {
     }
 
     @Override
+    public void setId(int id) {
+        if (id != this.idOfEpic) {
+            this.id = id;
+        }
+    }
+
+    @Override
     public String toString() {
         return String.format("id: %d, name: %s, description.length: %d, status: %s; idOfEpic:%d",
                 id, name, description.length(), status, idOfEpic);

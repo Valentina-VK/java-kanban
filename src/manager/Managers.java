@@ -4,14 +4,15 @@ import history.HistoryManager;
 import history.InMemoryHistoryManager;
 
 public class Managers {
-    static TaskManager manager = new InMemoryTaskManager();
-    static HistoryManager historyManager = new InMemoryHistoryManager();
+
+    private Managers() {
+    }
 
     public static TaskManager getDefault() {
-        return manager;
+        return new InMemoryTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {
-        return historyManager;
+        return new InMemoryHistoryManager();
     }
 }
