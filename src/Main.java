@@ -38,6 +38,7 @@ public class Main {
         oneTask.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(oneTask);
         System.out.println(oneTask);
+        printAllTasks(taskManager);
         System.out.println("\nТестируем обновление статуса Эпика при обновлении подзадачи");
         oneTask = taskManager.getTaskByID(9);
         oneTask.setStatus(Status.DONE);
@@ -81,10 +82,9 @@ public class Main {
             System.out.println(task);
         }
         System.out.println("История:");
-        for (Task task : Managers.getDefaultHistory().getHistory()) {
+        for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
     }
-
 
 }

@@ -1,5 +1,6 @@
 package manager;
 
+import history.HistoryManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -36,4 +37,6 @@ public interface TaskManager {
     void deleteAllSubtask();
 
     void deleteTaskById(int idOfTask);
+
+    List<Task> getHistory();
 }
