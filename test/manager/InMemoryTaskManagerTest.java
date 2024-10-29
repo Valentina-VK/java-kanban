@@ -94,5 +94,54 @@ public class InMemoryTaskManagerTest {
         assertNotEquals(newTaskId, notGenId, "Новый ID при добавлении не сгенерирован");
     }
 
+    @Test
+    void deleteTaskTest() {
+        Task task = new Task("Test addNewTask", "Test addNewTask description");
+        final int taskId = taskManager.addTask(task);
+        Epic epic = new Epic("Test addNewTask", "Test addNewTask description");
+        final int epicId = taskManager.addTask(epic);
+        Subtask subtask1 = new Subtask("Test addNewTask", "Test addNewTask description",
+                Status.NEW, epicId);
+        final int subId1 = taskManager.addTask(subtask1);
+        Subtask subtask2 = new Subtask("Test addNewTask", "Test addNewTask description",
+                Status.NEW, epicId);
+        final int subId2 = taskManager.addTask(subtask2);
 
+        taskManager.deleteTaskById(taskId);
+        assertNull(taskManager.getTaskByID(taskId), "Некорректное удаление задачи.");
+
+        taskManager.deleteTaskById(subId1);
+        assertNull(taskManager.getTaskByID(subId1), "Некорректное удаление подзадачи.");
+        epic = (Epic) taskManager.getTaskByID(epicId);
+        assertFalse(epic.getListIdOfSubtasks().contains(subId1), "В Эпике есть ссылка на удаленную подзадачу.");
+
+        taskManager.deleteTaskById(epicId);
+        assertNull(taskManager.getTaskByID(epicId), "Некорректное удаление эпика.");
+        assertNull(taskManager.getTaskByID(subId2), "При удалении эпика осталась подзадача.");
+    }
+
+    @Test
+    void deleteAllTasksTest() {
+        Task task = new Task("Test addNewTask", "Test addNewTask description");
+        taskManager.addTask(task);
+        Epic epic = new Epic("Test addNewTask", "Test addNewTask description");
+        final int epicId = taskManager.addTask(epic);
+        Subtask subtask1 = new Subtask("Test addNewTask", "Test addNewTask description",
+                Status.NEW, epicId);
+        taskManager.addTask(subtask1);
+        Subtask subtask2 = new Subtask("Test addNewTask", "Test addNewTask description",
+                Status.NEW, epicId);
+        taskManager.addTask(subtask2);
+
+        taskManager.deleteAllTask();
+        assertTrue(taskManager.getTaskList().isEmpty(), "Некорректное удаление задач.");
+
+        taskManager.deleteAllSubtask();
+        assertTrue(taskManager.getSubTaskList().isEmpty(), "Некорректное удаление подзадач.");
+        epic = (Epic) taskManager.getTaskByID(epicId);
+        assertTrue(epic.getListIdOfSubtasks().isEmpty(), "В Эпике есть список удаленных подзадач.");
+
+        taskManager.deleteAllEpic();
+        assertTrue(taskManager.getEpicList().isEmpty(), "Некорректное удаление эпика.");
+    }
 }

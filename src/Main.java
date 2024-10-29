@@ -37,12 +37,19 @@ public class Main {
         Task oneTask = taskManager.getTaskByID(2);
         oneTask.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(oneTask);
-        System.out.println(oneTask);
+        taskManager.getTaskByID(1);
+        taskManager.getTaskByID(3);
+        taskManager.getTaskByID(4);
+        taskManager.getTaskByID(10);
+        System.out.println(taskManager.getTaskByID(2));
+        oneTask.setStatus(Status.DONE);
+        taskManager.updateTask(oneTask);
         printAllTasks(taskManager);
         System.out.println("\nТестируем обновление статуса Эпика при обновлении подзадачи");
         oneTask = taskManager.getTaskByID(9);
         oneTask.setStatus(Status.DONE);
         taskManager.updateTask((Subtask) oneTask);
+        taskManager.getTaskByID(9);
         oneTask = taskManager.getTaskByID(idOfEpic2);
         System.out.println(oneTask);
         System.out.println("\nТестируем получение списка всех подзадач Эпика");
@@ -86,5 +93,4 @@ public class Main {
             System.out.println(task);
         }
     }
-
 }
