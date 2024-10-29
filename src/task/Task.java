@@ -14,6 +14,13 @@ public class Task {
         this.status = Status.NEW;
     }
 
+    public Task(Task o) {
+        this.name = o.name;
+        this.description = o.description;
+        this.status = o.status;
+        this.id = o.id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
