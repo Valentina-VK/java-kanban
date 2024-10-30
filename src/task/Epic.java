@@ -11,11 +11,6 @@ public class Epic extends Task {
         listIdOfSubtasks = new ArrayList<>();
     }
 
-    public Epic(Epic o) {
-        super(o);
-        listIdOfSubtasks = new ArrayList<>(o.listIdOfSubtasks);
-    }
-
     public void addSubtask(int idOfSubtask) {
         if (idOfSubtask == this.id) return;
         if (listIdOfSubtasks.contains(idOfSubtask)) return;

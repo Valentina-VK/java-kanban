@@ -11,7 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private Node first;
     private Node last;
-    Map<Integer, Node> mapOfNodes = new HashMap<>();
+    private final Map<Integer, Node> mapOfNodes = new HashMap<>();
 
     private static class Node {
         Task item;
@@ -38,21 +38,21 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
-        final Node l = last;
-        final Node newNode = new Node(l, task, null);
+        final Node lastBefore = last;
+        final Node newNode = new Node(lastBefore, task, null);
         last = newNode;
-        if (l == null)
+        if (lastBefore == null)
             first = newNode;
         else
-            l.next = newNode;
+            lastBefore.next = newNode;
     }
 
     private List<Task> getTasks() {
         List<Task> history = new ArrayList<>();
-        Node f = first;
-        while (f != null) {
-            history.add(f.item);
-            f = f.next;
+        Node firstBefore = first;
+        while (firstBefore != null) {
+            history.add(firstBefore.item);
+            firstBefore = firstBefore.next;
         }
         return history;
     }
