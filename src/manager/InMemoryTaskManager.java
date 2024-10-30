@@ -89,9 +89,11 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (epicList.containsKey(idOfTask)) {
             history.addHistory(epicList.get(idOfTask));
             return epicList.get(idOfTask);
-        } else {
+        } else if (subtaskList.containsKey(idOfTask)) {
             history.addHistory(subtaskList.get(idOfTask));
             return subtaskList.get(idOfTask);
+        } else {
+            return null;
         }
     }
 
@@ -107,17 +109,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTask() {
+        for (Task task : taskList.values()) {
+            history.remove(task.getId());
+        }
         taskList.clear();
     }
 
     @Override
     public void deleteAllEpic() {
+        for (Epic epic : epicList.values()) {
+            history.remove(epic.getId());
+        }
         epicList.clear();
+        for (Subtask subtask : subtaskList.values()) {
+            history.remove(subtask.getId());
+        }
         subtaskList.clear();
     }
 
     @Override
     public void deleteAllSubtask() {
+        for (Subtask subtask : subtaskList.values()) {
+            history.remove(subtask.getId());
+        }
         subtaskList.clear();
         for (Epic epic : epicList.values()) {
             epic.deleteAllSubtasks();
@@ -132,6 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (epicList.containsKey(idOfTask)) {
             for (int idSubtask : epicList.get(idOfTask).getListIdOfSubtasks()) {
                 subtaskList.remove(idSubtask);
+                history.remove(idSubtask);
             }
             epicList.remove(idOfTask);
         } else if (subtaskList.containsKey(idOfTask)) {
@@ -140,6 +155,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicList.get(idOfEpic).deleteSubtask(idOfTask);
             deduceEpicStatus(idOfEpic);
         }
+        history.remove(idOfTask);
     }
 
 
@@ -168,4 +184,3 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 }
-
