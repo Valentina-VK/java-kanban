@@ -1,18 +1,21 @@
 package task;
 
-import manager.Status;
-
 public class Subtask extends Task {
-    private final int idOfEpic;
+    private int idOfEpic;
 
     public Subtask(String name, String description, Status status, int idOfEpic) {
         super(name, description);
+        this.type = Type.SUBTASK;
         this.status = status;
         this.idOfEpic = idOfEpic;
     }
 
     public int getIdOfEpic() {
         return idOfEpic;
+    }
+
+    public void deleteIdOfEpic() {
+        this.idOfEpic = -1;
     }
 
     @Override
@@ -24,7 +27,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("id: %d, name: %s, description.length: %d, status: %s; idOfEpic:%d",
-                id, name, description.length(), status, idOfEpic);
+        return String.format("%d,%s,%s,%s,%s,%d", id, type, name, status, description, idOfEpic);
     }
 }

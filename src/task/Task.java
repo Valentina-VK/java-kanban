@@ -1,17 +1,17 @@
 package task;
 
-import manager.Status;
-
 public class Task {
     protected String name;
     protected String description;
     protected int id;
     protected Status status;
+    protected Type type;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        this.type = Type.TASK;
     }
 
     @Override
@@ -30,8 +30,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("id: %d, name: %s, description.length: %d, Status: %s",
-                id, name, description.length(), status);
+        return String.format("%d,%s,%s,%s,%s", id, type, name, status, description);
     }
 
     public void setId(int id) {
@@ -56,5 +55,9 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

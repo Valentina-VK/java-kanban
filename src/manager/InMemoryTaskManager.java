@@ -1,6 +1,7 @@
 package manager;
 
 import history.HistoryManager;
+import task.Status;
 import task.Task;
 import task.Epic;
 import task.Subtask;
@@ -15,7 +16,23 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epicList = new HashMap<>();
     private final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private int countID = 0;
-    private final HistoryManager history = Managers.getDefaultHistory();
+    protected final HistoryManager history = Managers.getDefaultHistory();
+
+    public Map<Integer, Task> getTasks() {
+        return taskList;
+    }
+
+    public Map<Integer, Epic> getEpics() {
+        return epicList;
+    }
+
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtaskList;
+    }
+
+    public void setCountID(int countID) {
+        this.countID = countID;
+    }
 
     @Override
     public int addTask(Task task) {
@@ -150,14 +167,15 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epicList.remove(idOfTask);
         } else if (subtaskList.containsKey(idOfTask)) {
-            int idOfEpic = subtaskList.get(idOfTask).getIdOfEpic();
+            Subtask subtask = subtaskList.get(idOfTask);
+            int idOfEpic = subtask.getIdOfEpic();
             subtaskList.remove(idOfTask);
             epicList.get(idOfEpic).deleteSubtask(idOfTask);
             deduceEpicStatus(idOfEpic);
+            subtask.deleteIdOfEpic();
         }
         history.remove(idOfTask);
     }
-
 
     private void deduceEpicStatus(int idOfEpic) {
         List<Integer> listIdOfSubtasks = epicList.get(idOfEpic).getListIdOfSubtasks();
@@ -170,13 +188,13 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (subtaskList.get(idSub).getStatus() == Status.DONE) {
                 countOfDone++;
             }
-            if (countOfDone == listIdOfSubtasks.size()) {
-                epicList.get(idOfEpic).setStatus(Status.DONE);
-            } else if (countOfDone > 0) {
-                epicList.get(idOfEpic).setStatus(Status.IN_PROGRESS);
-            } else {
-                epicList.get(idOfEpic).setStatus(Status.DONE);
-            }
+        }
+        if (countOfDone == listIdOfSubtasks.size()) {
+            epicList.get(idOfEpic).setStatus(Status.DONE);
+        } else if (countOfDone > 0) {
+            epicList.get(idOfEpic).setStatus(Status.IN_PROGRESS);
+        } else {
+            epicList.get(idOfEpic).setStatus(Status.NEW);
         }
     }
 
