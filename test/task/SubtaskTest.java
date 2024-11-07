@@ -1,6 +1,5 @@
 package task;
 
-import manager.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
