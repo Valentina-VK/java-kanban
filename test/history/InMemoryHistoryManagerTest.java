@@ -1,7 +1,7 @@
 package history;
 
 import manager.Managers;
-import manager.Status;
+import task.Status;
 import org.junit.jupiter.api.BeforeAll;
 import task.Epic;
 import task.Subtask;
@@ -90,5 +90,4 @@ public class InMemoryHistoryManagerTest {
         listForTest = Arrays.asList(task3, task4);
         assertArrayEquals(listForTest.toArray(), historyManager.getHistory().toArray(), "Первая задача не удалена");
     }
-
 }
