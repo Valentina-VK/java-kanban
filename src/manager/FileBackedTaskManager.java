@@ -8,10 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private static final String title = "id,type,name,status,description,epic";
-    Path path;
+    private static final String TITLE = "id,type,name,status,description,epic";
+    private final Path path;
 
-    FileBackedTaskManager(Path path) {
+    public FileBackedTaskManager(Path path) {
         this.path = path;
         if (Files.notExists(path)) {
             createTasksStorage(path);
@@ -31,7 +31,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (Writer fileWriter = new FileWriter(path.toString(), StandardCharsets.UTF_8)) {
-            fileWriter.write(title + "\n");
+            fileWriter.write(TITLE + "\n");
             for (Task task : getTasks().values()) {
                 fileWriter.write(task.toString() + "\n");
             }
@@ -55,8 +55,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        if (content.length() < title.length()) return taskManager;
-        String[] lines = content.substring(title.length() + 1).split("\n");
+        if (content.length() < TITLE.length()) return taskManager;
+        String[] lines = content.substring(TITLE.length() + 1).split("\n");
         if (!lines[0].isEmpty()) {
             for (String line : lines) {
                 Task task = fromString(line);
