@@ -2,6 +2,7 @@ package manager;
 
 import org.junit.jupiter.api.Test;
 import task.Epic;
+import task.Status;
 import task.Subtask;
 import task.Task;
 
@@ -49,9 +50,7 @@ public class InMemoryTaskManagerTest {
 
         assertNotNull(subtasksOfEpic, "Задачи не возвращаются.");
         assertEquals(0, subtasksOfEpic.size(), "Неверное количество подзадач.");
-
     }
-
 
     @Test
     void addNewSubtask() {

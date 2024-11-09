@@ -1,5 +1,5 @@
 import manager.Managers;
-import manager.Status;
+import task.Status;
 import manager.TaskManager;
 import task.Task;
 import task.Epic;
@@ -10,7 +10,6 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-
         TaskManager taskManager = Managers.getDefault();
 
         System.out.println("Тестируем создание и получение списка задач!");
@@ -18,12 +17,12 @@ public class Main {
         taskManager.addTask(new Task("Убока", "Вымыть полы"));
         taskManager.addTask(new Task("Стирка", "Постирать джинсы"));
         int idOfEpic1 = taskManager.addTask(new Epic("Сходить в магазин", "Купить продукты к обеду по списку"));
-        taskManager.addTask(new Subtask("Купить хлеб", "Цельнозерновой, нарезной",
+        taskManager.addTask(new Subtask("Купить хлеб", "Цельнозерновой",
                 Status.NEW, idOfEpic1));
-        taskManager.addTask(new Subtask("Купить лук", "белый, две головки", Status.NEW, idOfEpic1));
+        taskManager.addTask(new Subtask("Купить лук", "белый две головки", Status.NEW, idOfEpic1));
         taskManager.addTask(new Subtask("Купить моковь", "2 небольшие или 1 крупную",
                 Status.NEW, idOfEpic1));
-        taskManager.addTask(new Subtask("Купить сметану", "Свежая, жирность 20%, 300гр",
+        taskManager.addTask(new Subtask("Купить сметану", "Свежая жирность 20% 300гр",
                 Status.NEW, idOfEpic1));
         int idOfEpic2 = taskManager.addTask(new Epic("Обучение", "3-4 часа заниматься изучением Java"));
         taskManager.addTask(new Subtask("Изучить теорию", "очередная новая тема",
@@ -33,46 +32,20 @@ public class Main {
 
         printAllTasks(taskManager);
 
-        System.out.println("\nТестируем обновление и получение задачи по ID!");
+        System.out.println("\nТестируем обновление задач и загрузку данных в Новый менеджер");
         Task oneTask = taskManager.getTaskByID(2);
         oneTask.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(oneTask);
-        taskManager.getTaskByID(1);
-        taskManager.getTaskByID(3);
-        taskManager.getTaskByID(4);
-        taskManager.getTaskByID(10);
-        System.out.println(taskManager.getTaskByID(2));
-        oneTask.setStatus(Status.DONE);
-        taskManager.updateTask(oneTask);
-        printAllTasks(taskManager);
-        System.out.println("\nТестируем обновление статуса Эпика при обновлении подзадачи");
         oneTask = taskManager.getTaskByID(9);
         oneTask.setStatus(Status.DONE);
         taskManager.updateTask((Subtask) oneTask);
-        taskManager.getTaskByID(9);
-        oneTask = taskManager.getTaskByID(idOfEpic2);
-        System.out.println(oneTask);
-        System.out.println("\nТестируем получение списка всех подзадач Эпика");
-        for (Task task : taskManager.getSubTaskList(idOfEpic2)) {
-            System.out.println(task);
-        }
-        System.out.println("\nТестируем удаление задач по ID");
-        taskManager.deleteTaskById(1);
-        taskManager.deleteTaskById(idOfEpic1);
-        printAllTasks(taskManager);
-        System.out.println("\nТестируем удаление всех подзадач");
-        taskManager.deleteAllSubtask();
-        for (Task task : taskManager.getEpicList()) {
-            System.out.println(task);
-        }
-        for (Task task : taskManager.getSubTaskList()) {
-            System.out.println(task);
-        }
-        System.out.println("\nТестируем удаление всех задач");
+        TaskManager newTaskManager = Managers.getDefault();
+        printAllTasks(newTaskManager);
+
+        System.out.println("\nТестируем удаление всех задач из файла");
         taskManager.deleteAllTask();
         taskManager.deleteAllEpic();
         printAllTasks(taskManager);
-
     }
 
     private static void printAllTasks(TaskManager taskManager) {
