@@ -11,7 +11,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private final static String title = "id,type,name,status,description,epic";
     Path path;
 
-    FileBackedTaskManager(Path path) {
+    public FileBackedTaskManager(Path path) {
         this.path = path;
         if (Files.notExists(path)) {
             createTasksStorage(path);
