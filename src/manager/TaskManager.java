@@ -38,4 +38,6 @@ public interface TaskManager {
     void deleteTaskById(int idOfTask);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
 }

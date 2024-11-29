@@ -1,10 +1,13 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
     private final List<Integer> listIdOfSubtasks;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -28,5 +31,16 @@ public class Epic extends Task {
 
     public List<Integer> getListIdOfSubtasks() {
         return listIdOfSubtasks;
+    }
+
+    public void setTimeFields(LocalDateTime startTime, LocalDateTime endTime, Duration duration){
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.duration =duration;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 }

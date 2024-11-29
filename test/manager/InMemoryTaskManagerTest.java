@@ -12,8 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class InMemoryTaskManagerTest {
-    private static final TaskManager taskManager = Managers.getDefault();
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+
+    @Override
+    public InMemoryTaskManager createTestManager() {
+        return new InMemoryTaskManager();
+    }
 
     @Test
     void addNewTask() {
@@ -33,7 +37,7 @@ public class InMemoryTaskManagerTest {
 
         assertNotNull(tasks, "Задачи не возвращаются.");
         assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(task, tasks.get(0), "Задачи не совпадают.");
+        assertEquals(task, tasks.getFirst(), "Задачи не совпадают.");
     }
 
     @Test
