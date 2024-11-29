@@ -22,5 +22,4 @@ public class EpicTest {
         epic1.addSubtask(epic1.getId());
         Assertions.assertTrue(epic1.getListIdOfSubtasks().isEmpty());
     }
-
 }
