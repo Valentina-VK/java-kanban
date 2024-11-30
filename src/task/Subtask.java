@@ -1,7 +1,8 @@
 package task;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static manager.DateTimeFormat.DATE_TIME_FORMAT;
 
 public class Subtask extends Task {
     private int idOfEpic;
@@ -39,6 +40,6 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return String.format("%d,%s,%s,%s,%s,%s,%s,%d", id, type, name, status, description,
-                startTime.format(DateTimeFormatter.ofPattern("HH:mm_dd.MM.yyyy")), duration.toMinutes(), idOfEpic);
+                startTime.format(DATE_TIME_FORMAT), duration.toMinutes(), idOfEpic);
     }
 }

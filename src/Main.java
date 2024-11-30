@@ -1,9 +1,9 @@
 import manager.Managers;
-import task.Status;
 import manager.TaskManager;
-import task.Task;
 import task.Epic;
+import task.Status;
 import task.Subtask;
+import task.Task;
 
 import java.time.LocalDateTime;
 
@@ -46,23 +46,29 @@ public class Main {
         TaskManager newTaskManager = Managers.getDefault();
         printAllTasks(newTaskManager);
         System.out.println("\nТестируем приоритет задач");
-        taskManager.getPrioritizedTasks().forEach(System.out::println);
+        taskManager.getPrioritizedTasks()
+                .forEach(System.out::println);
 
         System.out.println("\nТестируем удаление всех задач из файла");
         taskManager.deleteAllTask();
         taskManager.deleteAllEpic();
         printAllTasks(taskManager);
-        taskManager.getPrioritizedTasks().forEach(System.out::println);
+        taskManager.getPrioritizedTasks()
+                .forEach(System.out::println);
     }
 
     private static void printAllTasks(TaskManager taskManager) {
         System.out.println("Задачи:");
-        taskManager.getTaskList().forEach(System.out::println);
+        taskManager.getTaskList()
+                .forEach(System.out::println);
         System.out.println("Эпики:");
-        taskManager.getEpicList().forEach(System.out::println);
+        taskManager.getEpicList()
+                .forEach(System.out::println);
         System.out.println("Подзадачи:");
-        taskManager.getSubTaskList().forEach(System.out::println);
+        taskManager.getSubTaskList()
+                .forEach(System.out::println);
         System.out.println("История:");
-        taskManager.getHistory().forEach(System.out::println);
+        taskManager.getHistory()
+                .forEach(System.out::println);
     }
 }

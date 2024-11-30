@@ -1,17 +1,24 @@
 package manager;
 
-import task.*;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
+import task.Type;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static manager.DateTimeFormat.DATE_TIME_FORMAT;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static final String TITLE = "id,type,name,status,description,startTime,duration,epic";
-    Path path;
+    private final Path path;
 
     public FileBackedTaskManager(Path path) {
         this.path = path;
@@ -88,7 +95,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         int id = Integer.parseInt(fieldsOfTask[0]);
         Type type = Type.valueOf(fieldsOfTask[1]);
         Status status = Status.valueOf(fieldsOfTask[3]);
-        LocalDateTime startTime = LocalDateTime.parse(fieldsOfTask[5], DateTimeFormatter.ofPattern("HH:mm_dd.MM.yyyy"));
+        LocalDateTime startTime = LocalDateTime.parse(fieldsOfTask[5], DATE_TIME_FORMAT);
         int durationInMinutes = Integer.parseInt(fieldsOfTask[6]);
         switch (type) {
             case TASK:

@@ -2,7 +2,8 @@ package task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static manager.DateTimeFormat.DATE_TIME_FORMAT;
 
 public class Task {
     protected String name;
@@ -48,7 +49,7 @@ public class Task {
     @Override
     public String toString() {
         return String.format("%d,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
-                startTime.format(DateTimeFormatter.ofPattern("HH:mm_dd.MM.yyyy")), duration.toMinutes());
+                startTime.format(DATE_TIME_FORMAT), duration.toMinutes());
     }
 
     public void setId(int id) {
