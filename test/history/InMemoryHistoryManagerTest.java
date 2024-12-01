@@ -1,30 +1,31 @@
 package history;
 
 import manager.Managers;
-import task.Status;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import task.Epic;
+import task.Status;
 import task.Subtask;
 import task.Task;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InMemoryHistoryManagerTest {
-    private static final HistoryManager historyManager = Managers.getDefaultHistory();
-    private static Task task1;
-    private static Task task2;
-    private static Epic task3;
-    private static Subtask task4;
-    private static Subtask task5;
-    private static int testId = 1000;
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private Task task1;
+    private Task task2;
+    private Epic task3;
+    private Subtask task4;
+    private Subtask task5;
+    private int testId = 1000;
 
-    @BeforeAll
-    static void createTasks() {
+    @BeforeEach
+    void createTasks() {
         task1 = new Task("New Task1", "Test description 1");
         task1.setId(testId++);
         task2 = new Task("New Task1", "Test description 1");

@@ -5,7 +5,6 @@ import history.InMemoryHistoryManager;
 
 import java.nio.file.Paths;
 
-
 public class Managers {
 
     private static final String PATH_TO_DATA = "src/data/TasksStorage.csv";
