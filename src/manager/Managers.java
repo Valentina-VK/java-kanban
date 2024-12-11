@@ -3,7 +3,7 @@ package manager;
 import history.HistoryManager;
 import history.InMemoryHistoryManager;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class Managers {
 
@@ -13,7 +13,11 @@ public class Managers {
     }
 
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(Paths.get(PATH_TO_DATA));
+        return new InMemoryTaskManager();
+    }
+
+    public static TaskManager getDefaultFileBackedTaskManager() {
+        return FileBackedTaskManager.loadFromFile(Path.of(PATH_TO_DATA));
     }
 
     public static HistoryManager getDefaultHistory() {

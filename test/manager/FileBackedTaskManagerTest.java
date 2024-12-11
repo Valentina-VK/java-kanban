@@ -70,9 +70,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
                 "First string of file is not title");
         assertEquals(taskManager.getTaskByID(id1).toString(), linesOfFile[1],
                 "Second string of file is not task");
-        assertEquals(taskManager.getTaskByID(id2).toString(), linesOfFile[2],
+        assertEquals(taskManager.getEpicByID(id2).toString(), linesOfFile[2],
                 "Third string of file is not epic");
-        assertEquals(taskManager.getTaskByID(id3).toString(), linesOfFile[3],
+        assertEquals(taskManager.getSubtaskByID(id3).toString(), linesOfFile[3],
                 "Fourth string of file is not subtask");
     }
 
@@ -92,9 +92,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         taskManager = FileBackedTaskManager.loadFromFile(testPath);
         assertEquals(testContent[1], taskManager.getTaskByID(1).toString(),
                 "Second string of file is not task");
-        assertEquals(testContent[2], taskManager.getTaskByID(2).toString(),
+        assertEquals(testContent[2], taskManager.getEpicByID(2).toString(),
                 "Third string of file is not epic");
-        assertEquals(testContent[3], taskManager.getTaskByID(3).toString(),
+        assertEquals(testContent[3], taskManager.getSubtaskByID(3).toString(),
                 "Fourth string of file is not subtask");
     }
 }

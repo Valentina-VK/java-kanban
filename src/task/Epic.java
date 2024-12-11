@@ -13,6 +13,7 @@ public class Epic extends Task {
         super(name, description);
         this.type = Type.EPIC;
         listIdOfSubtasks = new ArrayList<>();
+        endTime = LocalDateTime.of(1, 1, 1, 0, 0);
     }
 
     public void addSubtask(int idOfSubtask) {

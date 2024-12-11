@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,7 +57,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void addNewEpic() {
         final int epicId = taskManager.addTask(epic);
-        final Epic savedEpic = (Epic) taskManager.getTaskByID(epicId);
+        final Epic savedEpic = taskManager.getEpicByID(epicId);
 
         assertNotNull(savedEpic, "Задача не найдена.");
         assertEquals(epic, savedEpic, "Задачи не совпадают.");
@@ -80,12 +79,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 Status.NEW, subId1);
         final int subId2 = taskManager.addTask(subtask2);
 
-        final Subtask savedSub = (Subtask) taskManager.getTaskByID(subId1);
+        final Subtask savedSub = taskManager.getSubtaskByID(subId1);
 
         assertNotNull(savedSub, "Задача не найдена.");
         assertEquals(subtask1, savedSub, "Задачи не совпадают.");
 
-        assertNull(taskManager.getTaskByID(subId2), "Некорректное сохранение позадачи.");
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtaskByID(subId2), "Некорректное сохранение позадачи.");
 
         final List<Subtask> subtasks = taskManager.getSubTaskList();
 
@@ -97,8 +96,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void notConflictTasksInMemoryTaskManager() {
         int notGenId = 1111111;
         task.setId(notGenId);
-        taskManager.updateTask(task);
-        assertNull(taskManager.getTaskByID(notGenId), "Некорректное обновление позадачи.");
+        assertThrows(NotFoundException.class, () -> taskManager.updateTask(task), "Некорректное обновление задачи.");
+        assertThrows(NotFoundException.class, () -> taskManager.getTaskByID(notGenId), "Некорректное обновление задачи.");
 
         final List<Task> tasks = taskManager.getTaskList();
         int savedSize = tasks.size();
@@ -121,15 +120,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         final int subId2 = taskManager.addTask(subtask2);
 
         taskManager.deleteTaskById(taskId);
-        assertNull(taskManager.getTaskByID(taskId), "Некорректное удаление задачи.");
+        assertThrows(NotFoundException.class, () -> taskManager.getTaskByID(taskId), "Некорректное удаление задачи.");
 
-        taskManager.deleteTaskById(subId1);
-        assertNull(taskManager.getTaskByID(subId1), "Некорректное удаление подзадачи.");
+        taskManager.deleteSubtaskById(subId1);
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtaskByID(subId1), "Некорректное удаление подзадачи.");
         assertFalse(epic.getListIdOfSubtasks().contains(subId1), "В Эпике есть ссылка на удаленную подзадачу.");
 
-        taskManager.deleteTaskById(epicId);
-        assertNull(taskManager.getTaskByID(epicId), "Некорректное удаление эпика.");
-        assertNull(taskManager.getTaskByID(subId2), "При удалении эпика осталась подзадача.");
+        taskManager.deleteEpicById(epicId);
+        assertThrows(NotFoundException.class, () -> taskManager.getEpicByID(epicId), "Некорректное удаление эпика.");
+        assertThrows(NotFoundException.class, () -> taskManager.getSubtaskByID(subId2), "При удалении эпика осталась подзадача.");
     }
 
     @Test
@@ -212,11 +211,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 start.plusHours(1), 30, Status.NEW, epicId);
         taskManager.addTask(subtask1);
         taskManager.addTask(subtask2);
-        assertEquals(start, taskManager.getTaskByID(epicId).getStartTime(), "StartTime of Epic is not correct");
-        assertEquals(subtask2.getEndTime(), taskManager.getTaskByID(epicId).getEndTime(), "EndTime of Epic is not correct");
+        assertEquals(start, taskManager.getEpicByID(epicId).getStartTime(), "StartTime of Epic is not correct");
+        assertEquals(subtask2.getEndTime(), taskManager.getEpicByID(epicId).getEndTime(), "EndTime of Epic is not correct");
 
         Duration allSubTaskDuration = subtask1.getDuration().plus(subtask2.getDuration());
-        assertEquals(allSubTaskDuration, taskManager.getTaskByID(epicId).getDuration(), "Duration of Epic is not correct");
+        assertEquals(allSubTaskDuration, taskManager.getEpicByID(epicId).getDuration(), "Duration of Epic is not correct");
     }
 
     @Test
