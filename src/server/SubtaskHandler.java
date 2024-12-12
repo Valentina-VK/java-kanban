@@ -13,40 +13,41 @@ import java.util.regex.Pattern;
 public class SubtaskHandler extends BaseHttpHandler {
     private final TaskManager manager;
 
-    SubtaskHandler(TaskManager manager) {
+    public SubtaskHandler(TaskManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        try {
-            String requestMethod = httpExchange.getRequestMethod();
-            switch (requestMethod) {
-                case "GET": {
-                    getByRequest(httpExchange);
-                    break;
+        try (httpExchange) {
+            try {
+                String requestMethod = httpExchange.getRequestMethod();
+                switch (requestMethod) {
+                    case "GET": {
+                        getByRequest(httpExchange);
+                        break;
+                    }
+                    case "POST": {
+                        postByRequest(httpExchange);
+                        break;
+                    }
+                    case "DELETE": {
+                        deleteByRequest(httpExchange);
+                        break;
+                    }
+                    default:
+                        System.out.println("Необрабатываемый метод запроса");
+                        sendMethodNotAllowed(httpExchange);
                 }
-                case "POST": {
-                    postByRequest(httpExchange);
-                    break;
-                }
-                case "DELETE": {
-                    deleteByRequest(httpExchange);
-                    break;
-                }
-                default:
-                    System.out.println("Необрабатываемый метод запроса");
-                    sendMethodNotAllowed(httpExchange);
+            } catch (NotFoundException exception) {
+                System.out.println(exception.getMessage());
+                sendNotFound(httpExchange);
+            } catch (TaskTimeOverlapException exception) {
+                System.out.println(exception.getMessage());
+                sendHasInteractions(httpExchange);
+            } catch (Exception exception) {
+                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
             }
-        } catch (NotFoundException exception) {
-            System.out.println(exception.getMessage());
-            sendNotFound(httpExchange);
-        } catch (TaskTimeOverlapException exception) {
-            System.out.println(exception.getMessage());
-            sendHasInteractions(httpExchange);
-        } catch (Exception exception) {
-            httpExchange.sendResponseHeaders(500, 0);
-            httpExchange.close();
         }
     }
 
@@ -76,8 +77,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         if (Pattern.matches("^/subtasks$", path)) {
             if (task.getId() > 0) manager.updateTask(task);
             else manager.addTask(task);
-            httpExchange.sendResponseHeaders(201, 0);
-            httpExchange.close();
+            httpExchange.sendResponseHeaders(CodeResponse.MODIFIED.getCode(), 0);
         } else {
             sendMethodNotAllowed(httpExchange);
         }
@@ -87,8 +87,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         String path = httpExchange.getRequestURI().getPath();
         if (Pattern.matches("^/subtasks$", path)) {
             manager.deleteAllSubtask();
-            httpExchange.sendResponseHeaders(200, 0);
-            httpExchange.close();
+            httpExchange.sendResponseHeaders(CodeResponse.OK.getCode(), 0);
             return;
         }
         if (Pattern.matches("^/subtasks/\\d+$", path)) {
@@ -96,8 +95,7 @@ public class SubtaskHandler extends BaseHttpHandler {
             int id = parsePathId(pathId);
             if (id != -1) {
                 manager.deleteSubtaskById(id);
-                httpExchange.sendResponseHeaders(200, 0);
-                httpExchange.close();
+                httpExchange.sendResponseHeaders(CodeResponse.OK.getCode(), 0);
             }
         } else {
             sendMethodNotAllowed(httpExchange);

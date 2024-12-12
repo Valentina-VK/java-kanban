@@ -11,29 +11,30 @@ import java.util.regex.Pattern;
 public class PrioritizedHandler extends BaseHttpHandler {
     private final TaskManager manager;
 
-    PrioritizedHandler(TaskManager manager) {
+    public PrioritizedHandler(TaskManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        try {
-            String requestMethod = httpExchange.getRequestMethod();
-            if (requestMethod.equals("GET")) {
-                getByRequest(httpExchange);
-            } else {
-                System.out.println("Необрабатываемый метод запроса");
-                sendMethodNotAllowed(httpExchange);
+        try (httpExchange) {
+            try {
+                String requestMethod = httpExchange.getRequestMethod();
+                if (requestMethod.equals("GET")) {
+                    getByRequest(httpExchange);
+                } else {
+                    System.out.println("Необрабатываемый метод запроса");
+                    sendMethodNotAllowed(httpExchange);
+                }
+            } catch (NotFoundException exception) {
+                System.out.println(exception.getMessage());
+                sendNotFound(httpExchange);
+            } catch (TaskTimeOverlapException exception) {
+                System.out.println(exception.getMessage());
+                sendHasInteractions(httpExchange);
+            } catch (Exception exception) {
+                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
             }
-        } catch (NotFoundException exception) {
-            System.out.println(exception.getMessage());
-            sendNotFound(httpExchange);
-        } catch (TaskTimeOverlapException exception) {
-            System.out.println(exception.getMessage());
-            sendHasInteractions(httpExchange);
-        } catch (Exception exception) {
-            httpExchange.sendResponseHeaders(500, 0);
-            httpExchange.close();
         }
     }
 

@@ -12,30 +12,34 @@ public class BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        try (httpExchange) {
+            try {
+                System.out.println("Не задан путь запроса");
+                sendText(httpExchange, "Необходимо уточнить запрос");
+            } catch (Exception exception) {
+                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
+            }
+        }
     }
 
     protected void sendText(HttpExchange httpExchange, String text) throws IOException {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
         httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-        httpExchange.sendResponseHeaders(200, resp.length);
+        httpExchange.sendResponseHeaders(CodeResponse.OK.getCode(), resp.length);
         httpExchange.getResponseBody().write(resp);
-        httpExchange.close();
     }
 
     protected void sendNotFound(HttpExchange httpExchange) throws IOException {
-        httpExchange.sendResponseHeaders(404, 0);
-        httpExchange.close();
+        httpExchange.sendResponseHeaders(CodeResponse.NOT_FOUND.getCode(), 0);
     }
 
 
     protected void sendHasInteractions(HttpExchange httpExchange) throws IOException {
-        httpExchange.sendResponseHeaders(406, 0);
-        httpExchange.close();
+        httpExchange.sendResponseHeaders(CodeResponse.OVERLAP.getCode(), 0);
     }
 
     protected void sendMethodNotAllowed(HttpExchange httpExchange) throws IOException {
-        httpExchange.sendResponseHeaders(405, 0);
-        httpExchange.close();
+        httpExchange.sendResponseHeaders(CodeResponse.NOT_ALLOWED.getCode(), 0);
     }
 
     protected int parsePathId(String path) {

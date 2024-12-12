@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskManagerHistoryTest {
 
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
+    private final TaskManager manager = new InMemoryTaskManager();
+    private final HttpTaskServer taskServer = new HttpTaskServer(manager);
+    private final Gson gson = HttpTaskServer.getGson();
 
     public HttpTaskManagerHistoryTest() throws IOException {
     }
@@ -55,7 +55,7 @@ public class HttpTaskManagerHistoryTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(CodeResponse.OK.getCode(), response.statusCode());
 
         List<Task> serverTasks = gson.fromJson(response.body(),
                 new TypeToken<List<Task>>() {
@@ -73,6 +73,6 @@ public class HttpTaskManagerHistoryTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(405, response.statusCode());
+        assertEquals(CodeResponse.NOT_ALLOWED.getCode(), response.statusCode());
     }
 }

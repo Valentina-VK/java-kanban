@@ -24,11 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpTaskManagerSubtasksTest {
 
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
-    LocalDateTime startTime = LocalDateTime.now();
-    Epic epic;
+    private final TaskManager manager = new InMemoryTaskManager();
+    private final HttpTaskServer taskServer = new HttpTaskServer(manager);
+    private final Gson gson = HttpTaskServer.getGson();
+    private final LocalDateTime startTime = LocalDateTime.now();
+    private Epic epic;
+    private Subtask task;
 
     public HttpTaskManagerSubtasksTest() throws IOException {
     }
@@ -39,6 +40,7 @@ public class HttpTaskManagerSubtasksTest {
         manager.deleteAllEpic();
         epic = new Epic("TestEpic1", "Testing task 1");
         manager.addTask(epic);
+        task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         taskServer.start();
     }
 
@@ -49,13 +51,12 @@ public class HttpTaskManagerSubtasksTest {
 
     @Test
     public void testAddSubtask() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         String taskJson = gson.toJson(task);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
+        assertEquals(CodeResponse.MODIFIED.getCode(), response.statusCode());
 
         List<Subtask> tasksFromManager = manager.getSubTaskList();
 
@@ -66,7 +67,6 @@ public class HttpTaskManagerSubtasksTest {
 
     @Test
     public void testUpdateSubtask() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         manager.addTask(task);
         Subtask updatedTask = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.DONE, epic.getId());
         updatedTask.setId(task.getId());
@@ -76,13 +76,12 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(201, response.statusCode());
+        assertEquals(CodeResponse.MODIFIED.getCode(), response.statusCode());
         assertEquals(Status.DONE, manager.getSubtaskByID(task.getId()).getStatus(), "Некорректный статус задачи");
     }
 
     @Test
     public void testAddOverlapSubtask() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         manager.addTask(task);
         Subtask overlapTask = new Subtask("TestSubtask2", "Testing task 2", startTime, 60, Status.DONE, epic.getId());
         String taskJson = gson.toJson(overlapTask);
@@ -91,13 +90,12 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(406, response.statusCode());
+        assertEquals(CodeResponse.OVERLAP.getCode(), response.statusCode());
         assertEquals(1, manager.getSubTaskList().size(), "Некорректное количество задач");
     }
 
     @Test
     public void testDeleteAllSubtasks() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         Subtask task2 = new Subtask("TestSubtask2", "Testing task 2", startTime.plusHours(2), 60, Status.DONE, epic.getId());
         manager.addTask(task);
         manager.addTask(task2);
@@ -106,13 +104,12 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(CodeResponse.OK.getCode(), response.statusCode());
         assertEquals(0, manager.getSubTaskList().size(), "Некорректное количество задач");
     }
 
     @Test
     public void testDeleteSubtaskById() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         Subtask task2 = new Subtask("TestSubtask2", "Testing task 2", startTime.plusHours(2), 60, Status.DONE, epic.getId());
         manager.addTask(task);
         manager.addTask(task2);
@@ -121,13 +118,12 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(CodeResponse.OK.getCode(), response.statusCode());
         assertEquals(1, manager.getSubTaskList().size(), "Некорректное количество задач");
     }
 
     @Test
     public void testGetSubtasks() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         Subtask task2 = new Subtask("TestSubtask2", "Testing task 2", startTime.plusHours(2), 60, Status.DONE, epic.getId());
         manager.addTask(task);
         manager.addTask(task2);
@@ -136,7 +132,7 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(CodeResponse.OK.getCode(), response.statusCode());
 
         List<Subtask> serverTasks = gson.fromJson(response.body(),
                 new TypeToken<List<Subtask>>() {
@@ -147,7 +143,6 @@ public class HttpTaskManagerSubtasksTest {
 
     @Test
     public void testGetSubtaskById() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         Subtask task2 = new Subtask("TestSubtask2", "Testing task 2", startTime.plusHours(2), 60, Status.DONE, epic.getId());
         manager.addTask(task);
         manager.addTask(task2);
@@ -156,7 +151,7 @@ public class HttpTaskManagerSubtasksTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(CodeResponse.OK.getCode(), response.statusCode());
 
         Subtask serverTask = gson.fromJson(response.body(), Subtask.class);
         assertEquals(task2, serverTask, "Задачи не совпадают");
@@ -164,13 +159,12 @@ public class HttpTaskManagerSubtasksTest {
 
     @Test
     public void testGetSubtaskByBadId() throws IOException, InterruptedException {
-        Subtask task = new Subtask("TestSubtask1", "Testing task 1", startTime, 60, Status.NEW, epic.getId());
         manager.addTask(task);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks/777");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(404, response.statusCode());
+        assertEquals(CodeResponse.NOT_FOUND.getCode(), response.statusCode());
     }
 }
