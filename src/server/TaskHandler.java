@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 public class TaskHandler extends BaseHttpHandler {
-    private final TaskManager manager;
+    protected final TaskManager manager;
 
     public TaskHandler(TaskManager manager) {
         this.manager = manager;
@@ -19,39 +19,39 @@ public class TaskHandler extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        try (httpExchange) {
-            try {
-                String requestMethod = httpExchange.getRequestMethod();
-                switch (requestMethod) {
-                    case "GET": {
-                        getByRequest(httpExchange);
-                        break;
-                    }
-                    case "POST": {
-                        postByRequest(httpExchange);
-                        break;
-                    }
-                    case "DELETE": {
-                        deleteByRequest(httpExchange);
-                        break;
-                    }
-                    default:
-                        System.out.println("Необрабатываемый метод запроса");
-                        sendMethodNotAllowed(httpExchange);
+        try {
+            String requestMethod = httpExchange.getRequestMethod();
+            switch (requestMethod) {
+                case "GET": {
+                    getByRequest(httpExchange);
+                    break;
                 }
-            } catch (NotFoundException exception) {
-                System.out.println(exception.getMessage());
-                sendNotFound(httpExchange);
-            } catch (TaskTimeOverlapException exception) {
-                System.out.println(exception.getMessage());
-                sendHasInteractions(httpExchange);
-            } catch (Exception exception) {
-                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
+                case "POST": {
+                    postByRequest(httpExchange);
+                    break;
+                }
+                case "DELETE": {
+                    deleteByRequest(httpExchange);
+                    break;
+                }
+                default:
+                    System.out.println("Необрабатываемый метод запроса");
+                    sendMethodNotAllowed(httpExchange);
             }
+        } catch (NotFoundException exception) {
+            System.out.println(exception.getMessage());
+            sendNotFound(httpExchange);
+        } catch (TaskTimeOverlapException exception) {
+            System.out.println(exception.getMessage());
+            sendHasInteractions(httpExchange);
+        } catch (Exception exception) {
+            httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
+        } finally {
+            httpExchange.close();
         }
     }
 
-    private void getByRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
+    protected void getByRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
         String path = httpExchange.getRequestURI().getPath();
         if (Pattern.matches("^/tasks$", path)) {
             String response = gson.toJson(manager.getTaskList());
@@ -70,7 +70,7 @@ public class TaskHandler extends BaseHttpHandler {
         }
     }
 
-    private void postByRequest(HttpExchange httpExchange) throws IOException, TaskTimeOverlapException, NotFoundException {
+    protected void postByRequest(HttpExchange httpExchange) throws IOException, TaskTimeOverlapException, NotFoundException {
         String path = httpExchange.getRequestURI().getPath();
         Task task = gson.fromJson(new String(httpExchange.getRequestBody().readAllBytes(),
                 StandardCharsets.UTF_8), Task.class);
@@ -83,7 +83,7 @@ public class TaskHandler extends BaseHttpHandler {
         }
     }
 
-    private void deleteByRequest(HttpExchange httpExchange) throws IOException {
+    protected void deleteByRequest(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
         if (Pattern.matches("^/tasks$", path)) {
             manager.deleteAllTask();

@@ -10,48 +10,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-public class SubtaskHandler extends BaseHttpHandler {
-    private final TaskManager manager;
+public class SubtaskHandler extends TaskHandler {
 
     public SubtaskHandler(TaskManager manager) {
-        this.manager = manager;
+        super(manager);
     }
 
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        try (httpExchange) {
-            try {
-                String requestMethod = httpExchange.getRequestMethod();
-                switch (requestMethod) {
-                    case "GET": {
-                        getByRequest(httpExchange);
-                        break;
-                    }
-                    case "POST": {
-                        postByRequest(httpExchange);
-                        break;
-                    }
-                    case "DELETE": {
-                        deleteByRequest(httpExchange);
-                        break;
-                    }
-                    default:
-                        System.out.println("Необрабатываемый метод запроса");
-                        sendMethodNotAllowed(httpExchange);
-                }
-            } catch (NotFoundException exception) {
-                System.out.println(exception.getMessage());
-                sendNotFound(httpExchange);
-            } catch (TaskTimeOverlapException exception) {
-                System.out.println(exception.getMessage());
-                sendHasInteractions(httpExchange);
-            } catch (Exception exception) {
-                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
-            }
-        }
-    }
-
-    private void getByRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
+    protected void getByRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
         String path = httpExchange.getRequestURI().getPath();
         if (Pattern.matches("^/subtasks$", path)) {
             String response = gson.toJson(manager.getSubTaskList());
@@ -70,7 +35,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         }
     }
 
-    private void postByRequest(HttpExchange httpExchange) throws IOException, TaskTimeOverlapException, NotFoundException {
+    protected void postByRequest(HttpExchange httpExchange) throws IOException, TaskTimeOverlapException, NotFoundException {
         String path = httpExchange.getRequestURI().getPath();
         Subtask task = gson.fromJson(new String(httpExchange.getRequestBody().readAllBytes(),
                 StandardCharsets.UTF_8), Subtask.class);
@@ -83,7 +48,7 @@ public class SubtaskHandler extends BaseHttpHandler {
         }
     }
 
-    private void deleteByRequest(HttpExchange httpExchange) throws IOException {
+    protected void deleteByRequest(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
         if (Pattern.matches("^/subtasks$", path)) {
             manager.deleteAllSubtask();
