@@ -8,10 +8,6 @@ import com.sun.net.httpserver.HttpServer;
 
 import manager.Managers;
 import manager.TaskManager;
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -38,7 +34,6 @@ public class HttpTaskServer {
     }
 
     private void setEndPoints() {
-        server.createContext("/", new BaseHttpHandler());
         server.createContext("/tasks", new TaskHandler(manager));
         server.createContext("/subtasks", new SubtaskHandler(manager));
         server.createContext("/epics", new EpicHandler(manager));
@@ -49,19 +44,6 @@ public class HttpTaskServer {
     public static void main(String[] args) throws IOException {
 
         TaskManager taskManager = Managers.getDefault();
-
-        taskManager.addTask(new Task("Task1", "Description of task1"));
-        taskManager.addTask(new Task("Task2", "Description of task2",
-                LocalDateTime.of(2024, 12, 28, 12, 0), 90));
-        int idOfEpic1 = taskManager.addTask(new Epic("Epic1", "Description of Epic1"));
-        taskManager.addTask(new Subtask("SubTask1 of Epic1", "Description of Subtask1",
-                LocalDateTime.of(2024, 12, 30, 15, 15), 15, Status.NEW, idOfEpic1));
-        taskManager.addTask(new Subtask("SubTask2 of Epic1", "Description of Subtask2",
-                LocalDateTime.of(2024, 12, 30, 15, 35), 15, Status.NEW, idOfEpic1));
-        taskManager.addTask(new Subtask("SubTask3 of Epic1", "Description of Subtask3",
-                LocalDateTime.of(2024, 12, 30, 15, 55), 15, Status.NEW, idOfEpic1));
-        taskManager.addTask(new Subtask("SubTask4 of Epic1", "Description of Subtask4",
-                Status.NEW, idOfEpic1));
 
         HttpTaskServer server = new HttpTaskServer(taskManager);
 

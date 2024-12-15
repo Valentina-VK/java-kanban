@@ -7,20 +7,8 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class BaseHttpHandler implements HttpHandler {
+public class BaseHttpHandler {
     protected final Gson gson = HttpTaskServer.getGson();
-
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        try (httpExchange) {
-            try {
-                System.out.println("Не задан путь запроса");
-                sendText(httpExchange, "Необходимо уточнить запрос");
-            } catch (Exception exception) {
-                httpExchange.sendResponseHeaders(CodeResponse.SERVER_ERROR.getCode(), 0);
-            }
-        }
-    }
 
     protected void sendText(HttpExchange httpExchange, String text) throws IOException {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);

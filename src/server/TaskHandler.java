@@ -1,6 +1,7 @@
 package server;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import manager.NotFoundException;
 import manager.TaskManager;
 import manager.TaskTimeOverlapException;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-public class TaskHandler extends BaseHttpHandler {
+public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     protected final TaskManager manager;
 
     public TaskHandler(TaskManager manager) {
