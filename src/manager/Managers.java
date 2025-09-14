@@ -13,7 +13,11 @@ public class Managers {
     }
 
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        try {
+            return FileBackedTaskManager.loadFromFile(Path.of(PATH_TO_DATA));
+        } catch (RuntimeException e) {
+            return new InMemoryTaskManager();
+        }
     }
 
     public static TaskManager getDefaultFileBackedTaskManager() {
